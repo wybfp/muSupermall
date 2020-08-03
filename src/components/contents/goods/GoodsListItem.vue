@@ -1,6 +1,7 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.image" alt="" />
+    <!-- vue的监听方法@load="方法" -->
+    <img :src="goodsItem.image" alt="" @load="imageLoad" />
     <div class="goods-info">
       <p>{{ goodsItem.title }}</p>
       <span class="price">{{ goodsItem.height }}</span>
@@ -17,6 +18,12 @@ export default {
       default() {
         return {};
       }
+    }
+  },
+  methods: {
+    imageLoad() {
+      // 事件总线
+      this.$bus.$emit("itemImageLoad");
     }
   }
 };

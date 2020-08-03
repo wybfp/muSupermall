@@ -3,57 +3,69 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :bannerss="banners.list"></home-swiper>
-    <recommend-view :recommend="recommends.list"> </recommend-view>
-    <feature-view></feature-view>
-    <tab-control
-      :titles="['流行', '新款', '精选']"
-      class="tab-control"
-      @tabClick="tabClick"
-    ></tab-control>
-    <good-list :goods="showGoods"></good-list>
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>10</li>
-    </ul>
+    <!-- probe-type不加冒号统一当做字符串传，加冒号传具体类型 -->
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
+      <home-swiper :bannerss="banners.list"></home-swiper>
+      <recommend-view :recommend="recommends.list"> </recommend-view>
+      <feature-view></feature-view>
+      <tab-control
+        :titles="['流行', '新款', '精选']"
+        class="tab-control"
+        @tabClick="tabClick"
+      ></tab-control>
+      <good-list :goods="showGoods"></good-list>
+      <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+        <li>10</li>
+      </ul>
+    </scroll>
+    <!-- 组件不能直接监听点击,加native-->
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -65,6 +77,8 @@ import FeatureView from "./childComps/FeatureView";
 import TabControl from "components/contents/tabControl/TabControl";
 import NavBar from "components/common/navbar/NavBar";
 import GoodList from "components/contents/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/contents/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
@@ -76,7 +90,9 @@ export default {
     FeatureView,
     NavBar,
     TabControl,
-    GoodList
+    GoodList,
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -92,7 +108,8 @@ export default {
       //   new: { page: 0, list: [] },
       //   sell: { page: 0, list: [] }
       // },
-      currentType: "pop"
+      currentType: "pop",
+      isShowBackTop: false
     };
   },
   computed: {
@@ -107,8 +124,26 @@ export default {
     this.getHomeGoods("sell");
     // this.getHomeGoods();
   },
+  // 监听item图片事件
+  mounted() {
+    const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+    this.$bus.$on("itemImageLoad", () => {
+      refresh();
+    });
+  },
+
   methods: {
     // 事件监听相关
+    // 防抖动函数debounce 节流throttle可以研究
+    debounce(func, delay) {
+      let timer = null;
+      return function(...args) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, delay);
+      };
+    },
     tabClick(index) {
       //  console.log(1);
       switch (index) {
@@ -124,6 +159,10 @@ export default {
       }
       console.log(this.currentType);
     },
+    backClick() {
+      // this.$refs.scroll.scroll.scrollTo(0, 0, 700);
+      this.$refs.scroll.scrollTo(0, 0);
+    },
     // 网络请求相关
     getHomeMultidata() {
       getHomeMultidata().then(res => {
@@ -138,7 +177,17 @@ export default {
       getHomeGoods(type).then(res => {
         this.good[type].list.push(...res.data.banner.list);
         // console.log(this.good[type].list);
+
+        // 加载更多
+        this.$refs.scroll.finishPullUp();
       });
+    },
+    contentScroll(position) {
+      this.isShowBackTop = -position.y > 800;
+    },
+    loadMore() {
+      console.log("上拉加载更多");
+      this.getHomeGoods(this.currentType);
     }
     // getHomeGoods(type) {
     //   const page = this.goods[type].page + 1;
@@ -151,10 +200,13 @@ export default {
   }
 };
 </script>
-
+// scoped是作用域
 <style scoped>
 #home {
   padding-top: 44px;
+  /* vh==viewport height */
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
   background-color: var(--color-tint);
@@ -165,9 +217,23 @@ export default {
   top: 0;
   z-index: 9;
 }
-.tab-control {
+/* .tab-control {
   position: sticky;
   top: 44px;
   z-index: 9;
+} */
+/* .content {
+  height: calc(100%-93px);
+  overflow: hidden;
+  margin-top: 51px;
+} */
+.content {
+  /* height: 300px; */
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>
