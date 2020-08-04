@@ -34,27 +34,35 @@ export default {
       pullUpLoad: this.pullUpLoad
     });
     // 监听滚动的区域
-    this.scroll.on("scroll", position => {
-      // console.log(position);
-      this.$emit("scroll", position);
-      // 刷新以免图片加载后撑开高度，原高度加载不出来
-      this.scroll.refresh();
-    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", position => {
+        // console.log(position);
+        this.$emit("scroll", position);
+        // 刷新以免图片加载后撑开高度，原高度加载不出来
+        this.scroll.refresh();
+      });
+    }
+
     // 监听上拉事件
-    this.scroll.on("pullingUp", () => {
-      this.$emit("pullingUp");
-    });
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
     scrollTo(x, y, time = 700) {
       this.scroll && this.scroll.scrollTo(x, y, time);
     },
     finishPullUp() {
-      this.scroll.finishPullUp();
+      this.scroll && this.scroll.finishPullUp();
     },
     refresh() {
       console.log("----------");
       this.scroll && this.scroll.refresh();
+    },
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
     }
   }
 };
