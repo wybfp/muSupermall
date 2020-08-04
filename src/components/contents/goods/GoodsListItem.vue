@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!-- vue的监听方法@load="方法" -->
     <img :src="goodsItem.image" alt="" @load="imageLoad" />
     <div class="goods-info">
@@ -24,6 +24,10 @@ export default {
     imageLoad() {
       // 事件总线
       this.$bus.$emit("itemImageLoad");
+    },
+    itemClick() {
+      // console.log("跳转详情页");
+      this.$router.push("/detail/" + this.goodsItem.title);
     }
   }
 };
