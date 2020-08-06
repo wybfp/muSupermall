@@ -1,11 +1,11 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!-- vue的监听方法@load="方法" -->
-    <img :src="goodsItem.image" alt="" @load="imageLoad" />
+    <img :src="showImage" alt="" @load="imageLoad" />
     <div class="goods-info">
       <p>{{ goodsItem.title }}</p>
-      <span class="price">{{ goodsItem.height }}</span>
-      <span class="collect">{{ goodsItem.width }}</span>
+      <span class="price">{{ goodsItem.price }}</span>
+      <span class="collect">{{ goodsItem.cfav }}</span>
     </div>
   </div>
 </template>
@@ -20,6 +20,11 @@ export default {
       }
     }
   },
+  computed: {
+    showImage() {
+      return this.goodsItem.image || goodsItem.show.img;
+    }
+  },
   methods: {
     imageLoad() {
       // 事件总线
@@ -27,7 +32,7 @@ export default {
     },
     itemClick() {
       // console.log("跳转详情页");
-      this.$router.push("/detail/" + this.goodsItem.title);
+      this.$router.push("/detail/" + this.goodsItem.iid);
     }
   }
 };
@@ -35,7 +40,7 @@ export default {
 
 <style>
 .goods-item {
-  padding-bottom: 35px;
+  padding-bottom: 40px;
   position: relative;
   width: 48%;
 }
@@ -43,7 +48,7 @@ export default {
 .goods-item img {
   width: 100%;
   border-radius: 5px;
-  border: 3px solid var(--color-tint);
+  /* border: 3px solid var(--color-tint); */
 }
 
 .goods-info {

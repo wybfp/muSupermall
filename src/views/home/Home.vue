@@ -91,6 +91,7 @@ import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/contents/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
+import { debounce } from "../../common/utils";
 
 export default {
   name: "Home",
@@ -108,36 +109,37 @@ export default {
     return {
       banners: [],
       recommends: [],
-      good: {
-        pop: { list: [] },
-        new: { list: [] },
-        sell: { list: [] }
+
+      goods: {
+        pop: { page: 0, list: [] },
+        new: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
-      // goods: {
-      //   pop: { page: 0, list: [] },
-      //   new: { page: 0, list: [] },
-      //   sell: { page: 0, list: [] }
-      // },
       currentType: "pop",
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
+      ItemImageLisenr: null
     };
   },
   computed: {
     showGoods() {
-      return this.good[this.currentType].list;
+      return this.goods[this.currentType].list;
     }
   },
+  // 有缓存在keepalive可以用activated()  deactivated()
   activated() {
     // console.log("新建");
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
     this.$refs.scroll.refresh();
   },
   deactivated() {
+    // 保存y值
     // console.log("销毁");
     this.saveY = this.$refs.scroll.getScrollY();
+    // 取消全局事件的监听
+    this.$bus.$off("itemImageLoad", this.ItemImageLisenr);
   },
 
   created() {
@@ -145,28 +147,28 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
-    // this.getHomeGoods();
   },
   // 监听item图片事件
   mounted() {
     const refresh = this.debounce(this.$refs.scroll.refresh, 100);
-    this.$bus.$on("itemImageLoad", () => {
+    this.homeItemImageLisenr = () => {
       refresh();
-    });
+    };
+    this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
   },
 
   methods: {
     // 事件监听相关
     // 防抖动函数debounce 节流throttle可以研究
-    debounce(func, delay) {
-      let timer = null;
-      return function(...args) {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          func.apply(this, args);
-        }, delay);
-      };
-    },
+    // debounce(func, delay) {
+    //   let timer = null;
+    //   return function(...args) {
+    //     if (timer) clearTimeout(timer);
+    //     timer = setTimeout(() => {
+    //       func.apply(this, args);
+    //     }, delay);
+    //   };
+    // },
     tabClick(index) {
       //  console.log(1);
       switch (index) {
@@ -198,23 +200,15 @@ export default {
         // console.log(this.recommends);
       });
     },
-    getHomeGoods(type) {
-      getHomeGoods(type).then(res => {
-        this.good[type].list.push(...res.data.banner.list);
-        // console.log(this.good[type].list);
 
-        // 加载更多
-        this.$refs.scroll.finishPullUp();
+    getHomeGoods(type) {
+      const page = this.goods[type].page + 1;
+      getHomeGoods(type, page).then(res => {
+        console.log(res);
+        this.goods[type].list.push(...res.data.list);
+        this.goods[type].page += 1;
       });
     },
-    // getHomeGoods(type) {
-    //   const page = this.goods[type].page + 1;
-    //   getHomeGoods(type, page).then(res => {
-    //     console.log(res);
-    //     this.goods[type].list.push(...res.data.list);
-    //     this.goods[type].page += 1;
-    //   });
-    // }
     contentScroll(position) {
       // 判断BackTop是否显示
       this.isShowBackTop = -position.y > 800;

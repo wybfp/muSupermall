@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <ul class="contend">
+    <ul class="content">
       <li>1</li>
       <li>2</li>
       <li>3</li>
