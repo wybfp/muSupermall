@@ -29,6 +29,7 @@ import Scroll from "components/common/scroll/Scroll";
 import GoodList from "components/contents/goods/GoodsList";
 
 import { debounce } from "../../common/utils";
+import { itemLisenerMixin } from "../../common/mixin";
 
 import {
   getDetail,
@@ -38,6 +39,7 @@ import {
   getDetailRecommend
 } from "network/detail.js";
 export default {
+  mixins: [itemLisenerMixin],
   data() {
     return {
       iid: null,
@@ -47,8 +49,8 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
-      recommends: [],
-      ItemImageLisenr: null
+      recommends: []
+      // ItemImageLisenr: null
     };
   },
   components: {
@@ -104,11 +106,11 @@ export default {
     });
   },
   mounted() {
-    const refresh = this.debounce(this.$refs.scroll.refresh, 100);
-    this.ItemImageLisenr = () => {
-      refresh();
-    };
-    this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
+    // const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+    // this.ItemImageLisenr = () => {
+    //   refresh();
+    // };
+    // this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
   },
   // 有缓存在keepalive可以用activated()  deactivated()
   // 没有就 destroyed()

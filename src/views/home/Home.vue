@@ -92,6 +92,7 @@ import BackTop from "components/contents/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "../../common/utils";
+import { itemLisenerMixin } from "../../common/mixin";
 
 export default {
   name: "Home",
@@ -105,6 +106,7 @@ export default {
     Scroll,
     BackTop
   },
+  mixins: [itemLisenerMixin],
   data() {
     return {
       banners: [],
@@ -119,8 +121,8 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY: 0,
-      ItemImageLisenr: null
+      saveY: 0
+      // ItemImageLisenr: null
     };
   },
   computed: {
@@ -150,11 +152,11 @@ export default {
   },
   // 监听item图片事件
   mounted() {
-    const refresh = this.debounce(this.$refs.scroll.refresh, 100);
-    this.homeItemImageLisenr = () => {
-      refresh();
-    };
-    this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
+    // const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+    // this.ItemImageLisenr = () => {
+    //   refresh();
+    // };
+    // this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
   },
 
   methods: {
