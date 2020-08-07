@@ -3,7 +3,7 @@ import axios from "axios";
 export function request(config) {
   const instance = axios.create({
     // baseURL: "http://123.207.32.32:8000",
-
+    baseURL: "http://152.136.185.210:8000/api/z8",
     // baseURL: "http://adi-v3.dev",
     timeout: 5000
   });

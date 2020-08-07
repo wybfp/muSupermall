@@ -69,49 +69,18 @@ export default {
     this.iid = this.$route.params.iid;
 
     // 根据id请求详情数据
-    getDetail(this.iid).then(res => {
-      // 获取顶部的轮播数据
-      console.log(res);
-      const data = res.result;
-      this.topImages = data.itemInfo.topImages;
-
-      // 获取商品信息
-      this.goods = new Goods(
-        data.itemInfo,
-        data.columns,
-        data.shopInfo.services
-      );
-      // console.log(this.goods);
-
-      // 店铺信息
-      this.shop = new Shop(data.shopInfo);
-
-      // 商品的详情数据
-      this.detailInfo = data.detailInfo;
-      // console.log(this.detailInfo);
-
-      // 获取参数信息
-      this.paramInfo = new GoodsParams(
-        data.itemParams.info,
-        data.itemParams.rule
-      );
-      // console.log(this.paramInfo);
-      // 评论信息
-      if (data.rate.cRate !== 0) this.commentInfo = data.rate.list[0];
-    });
+    this.getDetail();
 
     // 请求推荐数据
-    getDetailRecommend().then(res => {
-      this.recommends = res.data.list;
-    });
+    this.getDetailRecommend();
   },
-  mounted() {
-    // const refresh = this.debounce(this.$refs.scroll.refresh, 100);
-    // this.ItemImageLisenr = () => {
-    //   refresh();
-    // };
-    // this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
-  },
+  // mounted() {
+  //   const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+  //   this.ItemImageLisenr = () => {
+  //     refresh();
+  //   };
+  //   this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
+  // },
   // 有缓存在keepalive可以用activated()  deactivated()
   // 没有就 destroyed()
   destroyed() {
@@ -120,6 +89,43 @@ export default {
   methods: {
     imageLoad() {
       this.$refs.scroll.refresh();
+    },
+    getDetail() {
+      getDetail(this.iid).then(res => {
+        // 获取顶部的轮播数据
+        console.log(res);
+        const data = res.result;
+        this.topImages = data.itemInfo.topImages;
+
+        // 获取商品信息
+        this.goods = new Goods(
+          data.itemInfo,
+          data.columns,
+          data.shopInfo.services
+        );
+        // console.log(this.goods);
+
+        // 店铺信息
+        this.shop = new Shop(data.shopInfo);
+
+        // 商品的详情数据
+        this.detailInfo = data.detailInfo;
+        console.log(this.detailInfo);
+
+        // 获取参数信息
+        this.paramInfo = new GoodsParams(
+          data.itemParams.info,
+          data.itemParams.rule
+        );
+        // console.log(this.paramInfo);
+        // 评论信息
+        if (data.rate.cRate !== 0) this.commentInfo = data.rate.list[0];
+      });
+    },
+    getDetailRecommend() {
+      getDetailRecommend().then(res => {
+        this.recommends = res.data.list;
+      });
     }
   }
 };

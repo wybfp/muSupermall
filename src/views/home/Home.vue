@@ -151,13 +151,13 @@ export default {
     this.getHomeGoods("sell");
   },
   // 监听item图片事件
-  mounted() {
-    // const refresh = this.debounce(this.$refs.scroll.refresh, 100);
-    // this.ItemImageLisenr = () => {
-    //   refresh();
-    // };
-    // this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
-  },
+  // mounted() {
+  //   const refresh = this.debounce(this.$refs.scroll.refresh, 100);
+  //   this.ItemImageLisenr = () => {
+  //     refresh();
+  //   };
+  //   this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
+  // },
 
   methods: {
     // 事件监听相关
