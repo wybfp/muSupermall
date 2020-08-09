@@ -1,14 +1,11 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-navbar"></detail-nav-bar>
-    <scroll class="detail-content" ref="scroll">
+    <scroll class="detail-content" ref="scroll" :probe-type="3">
       <detail-swiper :top-image="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
-      <detail-good-info
-        :detail-info="detailInfo"
-        @imageLoad="imageLoad"
-      ></detail-good-info>
+       <detail-image-info :detail-info="detailInfo" @imageLoad="imageLoad" ></detail-image-info>
       <detail-param :param-info="paramInfo"></detail-param>
       <detail-comment :comment-info="commentInfo"></detail-comment>
       <good-list :goods="recommends"></good-list>
@@ -21,7 +18,7 @@ import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
 import DetailShopInfo from "./childComps/DetailShopInfo";
-import DetailGoodInfo from "./childComps/DetailGoodInfo";
+import DetailImageInfo from "./childComps/DetailImageInfo";
 import DetailParam from "./childComps/DetailParam";
 import DetailComment from "./childComps/DetailComment";
 
@@ -39,7 +36,7 @@ import {
   getDetailRecommend
 } from "network/detail.js";
 export default {
-  mixins: [itemLisenerMixin],
+ name:"Detail",
   data() {
     return {
       iid: null,
@@ -52,13 +49,14 @@ export default {
       recommends: []
       // ItemImageLisenr: null
     };
-  },
+  }, 
+  mixins: [itemLisenerMixin],
   components: {
     DetailNavBar,
     DetailSwiper,
     DetailBaseInfo,
     DetailShopInfo,
-    DetailGoodInfo,
+    DetailImageInfo,
     DetailParam,
     DetailComment,
     Scroll,
@@ -66,6 +64,7 @@ export default {
   },
   created() {
     // console.log(this.$route.params);
+  
     this.iid = this.$route.params.iid;
 
     // 根据id请求详情数据
@@ -74,22 +73,22 @@ export default {
     // 请求推荐数据
     this.getDetailRecommend();
   },
-  // mounted() {
+  mounted() {
+  
   //   const refresh = this.debounce(this.$refs.scroll.refresh, 100);
   //   this.ItemImageLisenr = () => {
   //     refresh();
   //   };
-  //   this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
-  // },
+    //  this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
+
+  },
   // 有缓存在keepalive可以用activated()  deactivated()
   // 没有就 destroyed()
   destroyed() {
     this.$bus.$off("itemImageLoad", this.ItemImageLisenr);
   },
   methods: {
-    imageLoad() {
-      this.$refs.scroll.refresh();
-    },
+  
     getDetail() {
       getDetail(this.iid).then(res => {
         // 获取顶部的轮播数据
@@ -122,6 +121,9 @@ export default {
         if (data.rate.cRate !== 0) this.commentInfo = data.rate.list[0];
       });
     },
+      imageLoad() {
+      this.$refs.scroll.refresh();
+    },
     getDetailRecommend() {
       getDetailRecommend().then(res => {
         this.recommends = res.data.list;
@@ -138,12 +140,10 @@ export default {
   background-color: #fff;
   height: 100vh;
 }
-.detial-navbar {
-  position: relative;
-  z-index: 9;
-}
+
 .detail-content {
   /* 运算符前后都要保留空格 */
+   background-color: #fff;
   height: calc(100% - 44px);
   /* overflow: hidden;
   position: absolute;

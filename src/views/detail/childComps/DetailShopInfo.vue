@@ -52,6 +52,7 @@ export default {
   },
   filters: {
     sellCountFilter(value) {
+      console.log("我是正常的，我开始加载")
       if (value < 10000) return value;
       return (value / 10000).toFixed(1) + "万";
     }

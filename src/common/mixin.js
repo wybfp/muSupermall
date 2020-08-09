@@ -9,9 +9,9 @@ export const itemLisenerMixin = {
     };
   },
   mounted() {
-    const refresh = debounce(this.$refs.scroll.refresh, 100);
+    let newRefresh = debounce(this.$refs.scroll.refresh, 100);
     this.ItemImageLisenr = () => {
-      refresh();
+      newRefresh();
     };
     this.$bus.$on("itemImageLoad", this.ItemImageLisenr);
   }

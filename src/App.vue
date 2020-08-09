@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <!-- 点击另一个页面当前页面不会被销毁-->
-    <keep-alive exclude="Detail">
+    <!-- 点击另一个页面当前页面不会被销毁 相应的位置要有name-->
+    <keep-alive  exclude="Detail">
       <router-view></router-view>
     </keep-alive>
 
