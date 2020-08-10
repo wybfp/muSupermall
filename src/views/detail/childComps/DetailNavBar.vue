@@ -35,6 +35,7 @@ export default {
   methods: {
     itemClick(index) {
       this.currentIndex = index;
+      this.$emit("titleClick", index);
     },
     backClick() {
       this.$router.back();
@@ -44,7 +45,7 @@ export default {
 </script>
 
 <style>
-.nav-bar{
+.nav-bar {
   position: relative;
   z-index: 9;
   background-color: #fff;

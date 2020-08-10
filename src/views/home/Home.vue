@@ -88,11 +88,10 @@ import TabControl from "components/contents/tabControl/TabControl";
 import NavBar from "components/common/navbar/NavBar";
 import GoodList from "components/contents/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
-import BackTop from "components/contents/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "../../common/utils";
-import { itemLisenerMixin } from "../../common/mixin";
+import { itemLisenerMixin, backTopMixin } from "../../common/mixin";
 
 export default {
   name: "Home",
@@ -103,10 +102,9 @@ export default {
     NavBar,
     TabControl,
     GoodList,
-    Scroll,
-    BackTop
+    Scroll
   },
-  mixins: [itemLisenerMixin],
+  mixins: [itemLisenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -118,7 +116,7 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: false,
+
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0
@@ -188,10 +186,7 @@ export default {
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },
-    backClick() {
-      // this.$refs.scroll.scroll.scrollTo(0, 0, 700);
-      this.$refs.scroll.scrollTo(0, 0);
-    },
+
     // 网络请求相关
     getHomeMultidata() {
       getHomeMultidata().then(res => {
@@ -211,9 +206,10 @@ export default {
         this.goods[type].page += 1;
       });
     },
+
     contentScroll(position) {
       // 判断BackTop是否显示
-      this.isShowBackTop = -position.y > 800;
+      this.listenShowBackTop(position);
       // 决定tabControl是否吸顶
       this.isTabFixed = -position.y > this.tabOffsetTop;
     },

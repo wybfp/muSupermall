@@ -5,20 +5,19 @@
       <div class="desc">{{ detailInfo.desc }}</div>
       <div class="end"></div>
     </div>
-<div v-for="(item,index) in detailInfo.detailImage" :key="index" >
+    <div v-for="(item, index) in detailInfo.detailImage" :key="index">
       <div class="info-key">{{ item.key }}</div>
       <div class="info-list">
-        <img 
+        <img
           v-for="(imgItem, imgIndex) in item.list"
           :key="imgIndex"
           :src="imgItem"
-        @load="imgLoad"
+          @load="imgLoad"
           alt=""
         />
       </div>
-      </div>
     </div>
- 
+  </div>
 </template>
 
 <script>
@@ -43,7 +42,7 @@ export default {
       // console.log(this.imagesLength);
       // 判断所有的图片都加载完，那么进行一次回调
       if (++this.counter === this.imagesLength) {
-        console.log("我加载结束了");
+        // console.log("我加载结束了");
         this.$emit("imageLoad");
       }
     }
