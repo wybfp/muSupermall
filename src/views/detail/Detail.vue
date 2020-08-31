@@ -27,7 +27,7 @@
       ></detail-comment>
       <good-list ref="recommend" :goods="recommends"></good-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
@@ -224,6 +224,18 @@ export default {
       }
       // this.isShowBackTop = -position.y > BACK_TOP_POSITION;
       this.listenShowBackTop(position);
+    },
+    addToCart() {
+      // 获取购物车需要展示的信息
+      const produce = {};
+      produce.image = this.topImages[0];
+      produce.title = this.goods.title;
+      produce.desc = this.goods.desc;
+      produce.price = this.goods.nowPrice;
+      produce.iid = this.iid;
+      console.log(produce);
+      // 商品加入购物车
+      this.$store.dispatch("addCart", produce);
     }
   }
 };
